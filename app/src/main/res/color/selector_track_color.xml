@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 当开关被选中 (checked) 时，轨道颜色为主题主色，并设置 50% 的透明度 -->
+    <item android:color="?attr/colorPrimary" android:state_checked="true" android:alpha="0.5" />
+    <!-- 默认状态 (未选中) 时，轨道颜色为我们定义的中灰色 -->
+    <item android:color="@color/switch_track_off" />
+</selector>

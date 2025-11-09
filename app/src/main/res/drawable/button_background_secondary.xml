@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- 使用一个比卡片背景稍深一点的灰色 -->
+    <solid android:color="?attr/colorSurfaceVariant" />
+    <corners android:radius="100dp" /> <!-- 保持一致的圆角 -->
+</shape>

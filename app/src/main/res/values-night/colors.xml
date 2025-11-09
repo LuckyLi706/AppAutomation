@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <!-- 【新增】为同一个语义化颜色，提供一个适合夜间模式的、更柔和的色值 -->
+    <color name="status_highlight_color">#81C784</color>
+</resources>

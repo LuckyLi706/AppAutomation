@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 这是一个颜色状态列表，它的作用就是安全地引用主题属性 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 默认状态下，使用 colorOnSurfaceVariant 这个主题颜色 -->
+    <item android:color="?attr/colorOnSurfaceVariant" />
+</selector>

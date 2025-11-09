@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <!-- ==================================================== -->
+    <!-- ============== 1. 品牌颜色 (Brand Colors) ============== -->
+    <!-- ==================================================== -->
+    <!-- 主色调，用于 AppBar、重要按钮等，定义了应用的核心品牌形象 -->
+    <color name="md_primary">#345DA7</color>
+    <!-- 在主色调背景上显示的文字/图标颜色，通常是白色或黑色以保证对比度 -->
+    <color name="md_onPrimary">#FFFFFF</color>
+
+    <!-- 为夜间模式的悬浮按钮(FAB)专门定义一个强调色 -->
+    <color name="night_fab_color">#345DA7</color>
+    <!-- FAB上的图标颜色 -->
+    <color name="night_on_fab_color">#FFFFFF</color>
+
+    <!-- 次要色，用于次要按钮、强调非主要元素（如开关、滑块）等 -->
+    <color name="md_secondary">#006A60</color>
+    <!-- 在次要色背景上显示的文字/图标颜色 -->
+    <color name="md_onSecondary">#FFFFFF</color>
+
+
+    <!-- ======================================================= -->
+    <!-- ============== 2. 中性色 (Neutral Colors) ============== -->
+    <!-- ======================================================= -->
+    <!-- 这些颜色定义了界面的背景、卡片和文字，分为白天和夜晚两种模式 -->
+
+    <!-- == 白天模式 (Light Theme) == -->
+    <!-- 页面的主要背景色，设定整体的浅色基调 -->
+    <color name="md_background_light">#F8F9FA</color>
+    <!-- "表面"颜色，用于卡片(CardView)、底部弹窗(BottomSheet)、对话框等浮在背景之上的组件 -->
+    <color name="md_surface_light">#FFFFFF</color>
+    <!-- 在背景和表面上显示的文字/图标颜色，需要与浅色背景形成高对比度 -->
+    <color name="md_onSurface_light">#1A1C1E</color>
+
+    <!-- == 夜晚模式 (Dark Theme) == -->
+    <!-- 夜晚模式下的页面主要背景色 -->
+    <color name="md_background_dark">#121316</color>
+    <!-- 夜晚模式下的"表面"颜色，通常比背景色稍亮一些以区分层次 -->
+    <color name="md_surface_dark">#1E1F22</color>
+    <!-- 在夜晚模式的深色背景和表面上显示的文字/图标颜色 -->
+    <color name="md_onSurface_dark">#E2E2E6</color>
+
+    <!-- ... 你已有的颜色，比如 purple_500, white, black 等 ... -->
+
+    <!-- 【新】为开关轨道（关闭状态）定义的颜色 -->
+    <!-- 这是一个中性但清晰的灰色，比默认的 outline 颜色更深 -->
+    <color name="switch_track_off">#BDBDBD</color>
+
+    <!-- 【新】为开关滑块（关闭状态）定义的颜色 -->
+    <!-- 这是一个更浅的灰色，用于承载太阳图标 -->
+    <color name="switch_thumb_off">#F5F5F5</color>
+
+    <!-- 【新】为开关图标（关闭状态）定义的颜色 -->
+    <!-- 一个温暖的橙色，代表太阳 -->
+    <color name="switch_icon_sun">#FFA726</color>
+
+    <!-- 【新】为开关图标（开启状态）定义的颜色 -->
+    <!-- 一个深邃的蓝色，代表月亮 -->
+    <color name="switch_icon_moon">#7E57C2</color>
+    <!-- 【新增】定义一个语义化的“状态高亮”颜色，用于白天模式 -->
+    <color name="status_highlight_color">#4CAF50</color>
+</resources>

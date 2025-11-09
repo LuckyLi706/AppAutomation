@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Toolbar专属主题（用于控制内部样式） -->
+    <attr name="toolbarTheme" format="reference"/>
+    <!-- 页面背景色 -->
+    <attr name="custom_bg" format="color" />
+    <!-- 卡片背景色 -->
+    <attr name="custom_card_bg" format="color" />
+    <!-- 主文字颜色 -->
+    <attr name="custom_text_primary" format="color" />
+    <!-- 次要文字颜色 -->
+    <attr name="custom_text_secondary" format="color" />
+    <!-- 新增：悬浮按钮图标颜色 -->
+    <attr name="fabIconColor" format="color"/>
+</resources>

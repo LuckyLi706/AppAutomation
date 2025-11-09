@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
+        <!--
+          ↑↑↑ 关键改动 ↑↑↑
+          我们使用 android:background="?attr/colorPrimary"。
+          因为我们的父主题是兼容性极好的 Theme.MaterialComponents，
+          所以 AppBarLayout 能够正确解析这个主题属性。
+        -->
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:menu="@menu/top_app_bar_menu"
+            app:title="指令列表" />
+        <!--
+          ↑↑↑ 保持不变 ↑↑↑
+          因为 AppBar 的背景是深色(蓝色)，所以 Toolbar 内部的元素
+          (标题、菜单图标)必须使用适合深色背景的样式。
+        -->
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- 2. 用于显示指令列表的 RecyclerView -->
+    <!--     让 RecyclerView 占据剩余的所有空间     -->
+    <!-- 用于显示指令列表的 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="88dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/list_item_command_group" />
+
+    <!-- android:clipToPadding 和 android:paddingBottom 是为了防止列表内容被底部的 FAB 遮挡 -->
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_command"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="添加新指令"
+        app:srcCompat="@drawable/ic_add" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

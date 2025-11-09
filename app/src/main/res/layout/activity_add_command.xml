@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 根布局改为 ConstraintLayout -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.AddCommandActivity">
+
+    <!-- 1. AppBar: 保持不变，但要用约束固定在顶部 -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:title="添加新指令" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- 2. 指令名称输入部分: 约束在 AppBar 下方 -->
+    <LinearLayout
+        android:id="@+id/command_name_section"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout">
+
+        <!-- 水平对齐的输入行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp">
+            <!-- ... TextView 和 TextInputLayout ... (内容不变) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="指令名称"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:boxStrokeColor="?attr/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_command_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center_vertical"
+                    android:hint="请输入名称"
+                    android:inputType="textCapSentences"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp">
+            <!-- ... TextView 和 TextInputLayout ... (内容不变) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="指定应用"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="18sp" />
+
+            <!--
+              我们使用带轮廓的 TextInputLayout 来包裹 AutoCompleteTextView，
+              从而实现一个标准的 Material Design 下拉菜单 (Exposed Dropdown Menu)。
+            -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <AutoCompleteTextView
+                    android:id="@+id/dropdown_package"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    tools:ignore="LabelFor"  />
+                <!--
+                      inputType="none" 是关键，它防止软键盘弹出。
+                      tools:ignore="LabelFor" 是因为它的标签由外部 TextView 提供。
+                    -->
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- 分隔符 -->
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
+
+
+    <!--
+      =======================================================
+      ================ 4. RecyclerView (中部核心) ================
+      =======================================================
+    -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_command_steps"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/bottom_button_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/command_name_section"
+        tools:itemCount="3"
+        tools:listitem="@layout/list_item_single_command" />
+    <!--
+          关键约束：
+          -constraintTop_toBottomOf="@id/tv_steps_title" (上边贴着标题)
+          -constraintBottom_toTopOf="@id/bottom_button_container" (下边贴着按钮容器)
+          这使得 RecyclerView 能够自动填充中间的所有可用空间。
+        -->
+
+    <!--
+      =======================================================
+      ================ 5. 底部按钮容器 (底部核心) ===============
+      =======================================================
+    -->
+    <!--
+  【关键改动】
+  1. style: 明确指定为 Material 3 的描边按钮样式。
+  2. textSize: 将字体大小明确设置为 16sp，清晰易读。
+  3. padding: 增加了垂直内边距，让按钮本身更高，更易点击。
+-->
+    <!--
+          =======================================================
+          ================ 5. 底部按钮容器 (样式优化版) ============
+          =======================================================
+        -->
+    <LinearLayout
+        android:id="@+id/bottom_button_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- 添加步骤按钮 -> 改为次要的描边按钮 (Outlined) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_step"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="添加指令"
+            android:textSize="16sp" />
+        <!-- 保存指令按钮 -> 改为主要的填充按钮 (Filled) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_command"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="保存指令"
+            android:textSize="16sp" />
+        <!--
+          【关键改动】
+          1. style: 明确指定为 Material 3 的默认填充按钮样式。
+             这会给它一个主色调的背景，使其成为视觉焦点。
+          2. textSize: 同样设置为 16sp，与左侧按钮保持一致。
+          3. padding: 同样增加垂直内边距。
+        -->
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- 使用半透明的主题色，这是 Material 3 TonalButton 的精髓 -->
+    <!-- 12% 的 colorPrimary 叠加在 colorSurface 上 -->
+    <solid android:color="?attr/colorPrimaryContainer" />
+    <corners android:radius="100dp" /> <!-- 使用大圆角，形成药丸/胶囊形状 -->
+</shape>

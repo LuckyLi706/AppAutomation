@@ -1,0 +1,28 @@
+<resources>
+
+    <style name="Theme.AppAutomation" parent="Theme.Material3.DayNight.NoActionBar">
+        <!--
+          在夜晚模式下，AppBar 和卡片等“表面”使用同一种深灰色，
+          以获得更沉浸、更统一的外观。
+        -->
+        <item name="colorPrimary">@color/md_surface_dark</item>
+        <item name="colorOnPrimary">@color/md_onSurface_dark</item>
+
+        <!--
+          悬浮按钮(FAB)的颜色。
+          我们直接使用为夜间FAB专门定义的颜色，而不是去引用colorPrimary。
+          这样逻辑最清晰，不会出错。
+        -->
+        <item name="colorSecondary">@color/night_fab_color</item>
+        <item name="colorOnSecondary">@color/night_on_fab_color</item>
+
+        <!-- 确保内容背景色和文字颜色被正确覆盖 -->
+        <item name="android:colorBackground">@color/md_background_dark</item>
+        <item name="colorSurface">@color/md_surface_dark</item>
+        <item name="colorOnSurface">@color/md_onSurface_dark</item>
+
+        <!-- 状态栏颜色现在跟随新的、深灰色的 colorPrimary -->
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

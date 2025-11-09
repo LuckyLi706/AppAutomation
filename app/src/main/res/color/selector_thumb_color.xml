@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 当开关被选中 (checked) 时，滑块颜色为主题主色 -->
+    <item android:color="?attr/colorPrimary" android:state_checked="true" />
+    <!-- 默认状态 (未选中) 时，滑块颜色为我们定义的浅灰色 -->
+    <item android:color="@color/switch_thumb_off" />
+</selector>

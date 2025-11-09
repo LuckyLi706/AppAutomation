@@ -1,0 +1,22 @@
+<resources>
+
+    <style name="Theme.AppAutomation" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- 白天模式下，AppBar使用品牌主色 -->
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorOnPrimary">@color/md_onPrimary</item>
+
+        <!--
+          白天模式下，FAB默认也使用品牌色。
+          我们这里明确指定一下，让逻辑更清晰。
+        -->
+        <item name="colorSecondary">@color/md_primary</item>
+        <item name="colorOnSecondary">@color/md_onPrimary</item>
+
+        <!-- 其他属性保持不变 -->
+        <item name="android:colorBackground">@color/md_background_light</item>
+        <item name="colorSurface">@color/md_surface_light</item>
+        <item name="colorOnSurface">@color/md_onSurface_light</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

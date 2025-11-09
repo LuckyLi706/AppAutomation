@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 当开关被选中 (checked) 时，图标颜色为月亮的深蓝色 -->
+    <item android:color="@color/switch_icon_moon" android:state_checked="true" />
+    <!-- 默认状态 (未选中) 时，图标颜色为太阳的橙色 -->
+    <item android:color="@color/switch_icon_sun" />
+</selector>
