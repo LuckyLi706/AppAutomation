@@ -34,9 +34,6 @@ class AutomationService : Service() {
     private var activeCommandName: String? = null
     private var currentState: RunState = RunState.IDLE
 
-    // 【3. 新增 MediaSessionCompat 成员变量】
-    private var mediaSession: MediaSessionCompat? = null
-
 
     companion object {
         // 定义各种 Action，用于 Intent 通信
@@ -52,7 +49,7 @@ class AutomationService : Service() {
         const val EXTRA_COMMAND_NAME = "COMMAND_NAME"
         const val EXTRA_STATE = "STATE"
 
-        private const val NOTIFICATION_ID = 1
+        private const val NOTIFICATION_ID = 1026
         private const val CHANNEL_ID = "AutomationChannel"
     }
 
@@ -63,9 +60,6 @@ class AutomationService : Service() {
         // 它只需要一个唯一的标签名即可
         // 初始化 MediaSession
         createNotificationChannel()
-        mediaSession = MediaSessionCompat(this, "AutomationService").apply {
-            isActive = true // 必须激活
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,12 +69,12 @@ class AutomationService : Service() {
         )
 
         // 【核心修改】处理服务被系统重启的情况
-        if (intent == null) {
-            handleServiceRestart()
-            return START_STICKY
-        }
+//        if (intent == null) {
+//            handleServiceRestart()
+//            return START_STICKY
+//        }
 
-        when (intent.action) {
+        when (intent?.action) {
             ACTION_START -> {
                 // 这个分支现在只处理从 MainActivity 来的首次启动
                 val commandGroup = intent.getSerializableExtra(EXTRA_COMMAND_LIST) as? CommandGroup
@@ -336,10 +330,14 @@ class AutomationService : Service() {
             // 【关键步骤】应用自定义视图
             .setCustomContentView(customView)
             .setCustomBigContentView(customView) // 为了在展开时也保持一致，使用同一个视图
+            .setPriority(NotificationManager.IMPORTANCE_HIGH)
 
             // 【重要】使用这个样式来包装自定义视图，它会自动处理背景、圆角等
             // 使你的自定义布局看起来更像一个原生通知
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            builder.setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
+        }
 
         return builder.build()
     }
@@ -358,7 +356,7 @@ class AutomationService : Service() {
         val channel = NotificationChannel(
             CHANNEL_ID,
             "自动化任务状态",
-            NotificationManager.IMPORTANCE_DEFAULT // 设置为 LOW，避免声音和振动，只在状态栏显示图标
+            NotificationManager.IMPORTANCE_HIGH // 设置为 LOW，避免声音和振动，只在状态栏显示图标
         )
         getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
     }
@@ -366,8 +364,6 @@ class AutomationService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         serviceJob.cancel() // 当服务销毁时，取消所有在该作用域中启动的协程
-        mediaSession?.isActive = false
-        mediaSession?.release() // 释放资源
         Log.d("com.lucky.appautomation.service.AutomationService", "Service Destroyed")
     }
 

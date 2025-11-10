@@ -29,6 +29,8 @@ import com.lucky.appautomation.db.AppDatabase
 import com.lucky.appautomation.db.model.CommandGroup
 import com.lucky.appautomation.service.AutomationService
 import com.lucky.appautomation.utils.AccessibilityUtils
+import com.lucky.appautomation.utils.ServiceUtils
+import com.lucky.appautomation.utils.ServiceUtils.Companion.isServiceRunning
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         // 【新增】处理从通知栏发来的 "继续" Intent
-        if (intent?.action == ACTION_CONTINUE_TASK) {
+        if (intent.action == ACTION_CONTINUE_TASK) {
             val commandName = intent.getStringExtra(AutomationService.EXTRA_COMMAND_NAME)
             if (commandName != null) {
                 // 找到对应的 CommandGroupWithCommands 并调用 onContinueClicked
@@ -155,7 +157,11 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
 
         askNotificationPermission()
 
-        observeAndUpdateUi()
+        /// 检测服务是否被杀死
+        if (!applicationContext.isServiceRunning(AutomationService::class)) {
+            SettingsManager.saveRunningState(this, null, RunState.IDLE)
+            TaskStateManager.updateState(null, RunState.IDLE)
+        }
 
         observeTaskState()
     }
