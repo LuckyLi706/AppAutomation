@@ -25,6 +25,7 @@ class CommandGroupAdapter :
         fun onPauseClicked(commandGroup: CommandGroup)
         fun onContinueClicked(commandGroup: CommandGroup)
         fun onStopClicked(commandGroup: CommandGroup)
+        fun onDeleteClicked(commandGroup: CommandGroup, index: Int)
     }
 
     private var callback: InteractionCallback? = null
@@ -79,7 +80,7 @@ class CommandGroupAdapter :
         /**
          * 主绑定方法，根据状态分发到不同设置函数
          */
-        fun bind(commandGroup: CommandGroup) {
+        fun bind(commandGroup: CommandGroup, index: Int) {
             // 绑定静态信息，如标题和循环状态
             bindStaticInfo(commandGroup)
 
@@ -91,7 +92,7 @@ class CommandGroupAdapter :
             }
 
             // 根据状态更新UI和设置监听器
-            updateUiForState(stateForThisItem, commandGroup)
+            updateUiForState(stateForThisItem, commandGroup, index)
         }
 
         /**
@@ -105,33 +106,38 @@ class CommandGroupAdapter :
         /**
          * 【核心修改】根据状态更新UI，并只在需要时设置点击监听器
          */
-        fun updateUiForState(state: RunState, commandGroup: CommandGroup) {
+        fun updateUiForState(state: RunState, commandGroup: CommandGroup, index: Int) {
             // 根据当前 item 的状态，配置正确的按钮和事件
             when (state) {
-                RunState.IDLE -> setupIdleState(commandGroup)
-                RunState.RUNNING -> setupRunningState(commandGroup)
-                RunState.PAUSED -> setupPausedState(commandGroup)
+                RunState.IDLE -> setupIdleState(commandGroup, index)
+                RunState.RUNNING -> setupRunningState(commandGroup, index)
+                RunState.PAUSED -> setupPausedState(commandGroup, index)
             }
         }
 
         /**
          * 状态一：空闲。显示“启动”按钮。
          */
-        private fun setupIdleState(commandGroup: CommandGroup) {
+        private fun setupIdleState(commandGroup: CommandGroup, index: Int) {
             binding.btnStartCommand.visibility = View.VISIBLE
+            binding.btnDeleteCommand.visibility = View.VISIBLE
             binding.groupRunningButtons.visibility = View.GONE
             binding.groupPausedButtons.visibility = View.GONE
 
             binding.btnStartCommand.setOnClickListener {
                 callback?.onStartClicked(commandGroup)
             }
+            binding.btnDeleteCommand.setOnClickListener {
+                callback?.onDeleteClicked(commandGroup, index)
+            }
         }
 
         /**
          * 状态二：运行中。显示“暂停”和“结束”按钮。
          */
-        private fun setupRunningState(commandGroup: CommandGroup) {
+        private fun setupRunningState(commandGroup: CommandGroup, index: Int) {
             binding.btnStartCommand.visibility = View.GONE
+            binding.btnDeleteCommand.visibility = View.GONE
             binding.groupRunningButtons.visibility = View.VISIBLE
             binding.groupPausedButtons.visibility = View.GONE
 
@@ -142,8 +148,9 @@ class CommandGroupAdapter :
         /**
          * 状态三：已暂停。显示“继续”和“结束”按钮。
          */
-        private fun setupPausedState(commandGroup: CommandGroup) {
+        private fun setupPausedState(commandGroup: CommandGroup, index: Int) {
             binding.btnStartCommand.visibility = View.GONE
+            binding.btnDeleteCommand.visibility = View.GONE
             binding.groupRunningButtons.visibility = View.GONE
             binding.groupPausedButtons.visibility = View.VISIBLE
 
@@ -159,7 +166,7 @@ class CommandGroupAdapter :
     }
 
     override fun onBindViewHolder(holder: CommandGroupViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), position)
     }
 
     /**
@@ -174,7 +181,7 @@ class CommandGroupAdapter :
         if (payloads.contains(PAYLOAD_STATE_CHANGE)) {
             val commandGroup = getItem(position)
             val state = if (commandGroup.name == activeCommandName) currentState else RunState.IDLE
-            holder.updateUiForState(state, commandGroup)
+            holder.updateUiForState(state, commandGroup, position)
         } else {
             // 如果没有 payload，执行全量绑定
             super.onBindViewHolder(holder, position, payloads)

@@ -42,10 +42,11 @@ object SettingsManager {
         getPreferences(context).edit().putInt(KEY_THEME, themeMode).apply()
     }
 
-    fun loadAndApplyTheme(context: Context) {
+    fun loadAndApplyTheme(context: Context): Int {
         val savedTheme =
-            getPreferences(context).getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            getPreferences(context).getInt(KEY_THEME, AppCompatDelegate.MODE_NIGHT_NO)
         AppCompatDelegate.setDefaultNightMode(savedTheme)
+        return savedTheme
     }
     // endregion
 

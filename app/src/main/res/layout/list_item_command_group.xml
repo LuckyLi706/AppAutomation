@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_item_command_group"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
@@ -22,35 +23,35 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             app:layout_constraintEnd_toStartOf="@id/buttons_container"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="一个非常非常长的深夜自动打卡脚本标题" />
+            tools:text="一个非常非常长的深夜自动打卡" />
 
         <TextView
             android:id="@+id/tv_loop_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:drawablePadding="4dp"
             android:gravity="center_vertical"
+            android:text="循环执行"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorSecondary"
-            app:drawableStartCompat="@drawable/ic_sync"
-            app:drawableTint="?attr/colorSecondary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_command_title"
-            android:text="循环执行" />
+            app:layout_constraintTop_toBottomOf="@id/tv_command_title" />
 
         <LinearLayout
             android:id="@+id/buttons_container"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:gravity="center_vertical|end"
-            android:orientation="horizontal"
             android:animateLayoutChanges="true"
+            android:gravity="center_vertical|end"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -58,7 +59,40 @@
             <LinearLayout
                 android:id="@+id/btn_start_command"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_background_primary"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:visibility="visible"
+                android:layout_marginBottom="3dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_play_arrow"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="启动"
+                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                    android:textColor="?attr/colorPrimary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btn_delete_command"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:background="@drawable/button_background_primary"
                 android:clickable="true"
                 android:focusable="true"
@@ -73,14 +107,14 @@
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_play_arrow"
-                    app:tint="?attr/colorPrimary" />
+                    android:src="@drawable/ic_close"
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="启动"
+                    android:text="删除"
                     android:textAppearance="?attr/textAppearanceLabelMedium"
                     android:textColor="?attr/colorPrimary" />
             </LinearLayout>
@@ -158,7 +192,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <LinearLayout

@@ -3,24 +3,30 @@ package com.lucky.appautomation.activity
 import CommandGroupAdapter
 import RunState
 import SettingsManager
+import TaskStateManager
 import android.Manifest
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Canvas
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lucky.appautomation.AutomationApplication
 import com.lucky.appautomation.R
@@ -29,19 +35,26 @@ import com.lucky.appautomation.db.AppDatabase
 import com.lucky.appautomation.db.model.CommandGroup
 import com.lucky.appautomation.service.AutomationService
 import com.lucky.appautomation.utils.AccessibilityUtils
-import com.lucky.appautomation.utils.ServiceUtils
 import com.lucky.appautomation.utils.ServiceUtils.Companion.isServiceRunning
+import com.yanzhenjie.recyclerview.OnItemMenuClickListener
+import com.yanzhenjie.recyclerview.SwipeMenuCreator
+import com.yanzhenjie.recyclerview.SwipeMenuItem
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.max
+
 
 class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallback {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var commandAdapter: CommandGroupAdapter
     private lateinit var commandGroupFlow: Flow<List<CommandGroup>>
+    private lateinit var commandGroupList List<CommandGroup>
+
 
     companion object {
         // 【新增】定义一个Action，用于从通知栏触发继续任务
@@ -188,6 +201,14 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
                     "com.lucky.appautomation.activity.MainActivity",
                     "Flow emitted new list with ${freshListOfGroups.size} items."
                 )
+                commandGroupList = freshListOfGroups as List<CommandGroup>
+                for (item in commandGroupList) {
+                    val commands =
+                        AppDatabase.getInstance(AutomationApplication.context).commandDao()
+                            .getCommandsByGroupName(item.name)
+                    (item as CommandGroup).commands = commands
+                }
+
                 commandAdapter.submitList(freshListOfGroups)
             }
         }
@@ -271,6 +292,10 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
         commandAdapter.updateState(null, RunState.IDLE)
     }
 
+    override fun onDeleteClicked(commandGroup: CommandGroup, index: Int) {
+        this.showDeleteDialog(commandGroup.name, index)
+    }
+
     /**
      * 这个方法现在属于 Activity，使用 this 作为上下文，绝不会再崩溃。
      */
@@ -322,7 +347,39 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
         }
     }
 
-    // 【删除】旧的 setupStartButton 和 updateButtonUi 方法，因为逻辑已经移到 Adapter 中
-    // private fun setupStartButton() { ... }
-    // private fun updateButtonUi() { ... }
+    /**
+     * 【3. 新增方法：显示确认循环的对话框】
+     */
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun showDeleteDialog(name: String, index: Int) {
+        AlertDialog.Builder(this)
+            .setTitle("删除${name}") // 设置弹窗标题
+            .setMessage("是否删除此组指令？，删除之后不可恢复") // 设置弹窗主文案
+            .setPositiveButton("确定") { dialog, which ->
+                // 用户点击了“是”
+                // 在这里执行“循环”的保存逻辑
+                val intent = Intent(this, AutomationService::class.java).apply {
+                    action = AutomationService.ACTION_STOP
+                }
+                startService(intent)
+                commandAdapter.updateState(null, RunState.IDLE)
+                GlobalScope.launch {
+                    AppDatabase.getInstance(AutomationApplication.context).commandGroupDao()
+                        .delete(name)
+                    runOnUiThread {
+                        commandAdapter.notifyItemRemoved(index) // 通知刷新
+                    }
+                }
+
+
+                dialog.dismiss() // 关闭对话框
+            }
+            .setNegativeButton("取消") { dialog, which ->
+                // 用户点击了“否”
+                // 在这里执行“不循环”的保存逻辑
+                dialog.dismiss() // 关闭对话框
+            }
+            .setCancelable(true) // (可选) 设置为 true 允许用户通过点击外部或返回键取消对话框
+            .show() // 显示弹窗
+    }
 }

@@ -59,6 +59,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.activity:activity-ktx:1.9.0" // activity-ktx 通常也需要
+    implementation 'com.yanzhenjie.recyclerview:x:1.3.2'
 
     // 协程依赖（Kotlin 1.9.0 适配版本）
     implementation(libs.jetbrains.kotlinx.coroutines.android)

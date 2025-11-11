@@ -45,7 +45,7 @@ class SettingsActivity : AppCompatActivity() {
         // 1. 加载主题设置
         // 默认值由 MyApplication 和 SettingsManager 里的 MODE_NIGHT_FOLLOW_SYSTEM 决定
         val isNightMode =
-            AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+            SettingsManager.loadAndApplyTheme(this) == AppCompatDelegate.MODE_NIGHT_YES
         binding.tvThemeSubtitle.text = if (isNightMode) "夜晚模式" else "白天模式"
         binding.switchTheme.isChecked = isNightMode
 
