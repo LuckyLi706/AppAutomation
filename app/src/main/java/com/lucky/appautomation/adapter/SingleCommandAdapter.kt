@@ -9,10 +9,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
+import com.lucky.appautomation.AutomationApplication
 import com.lucky.appautomation.databinding.ListItemSingleCommandBinding
+import com.lucky.appautomation.db.AppDatabase
 import com.lucky.appautomation.db.model.Command
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-class SingleCommandAdapter(private val context: Context, private val steps: MutableList<Command>) :
+class SingleCommandAdapter(private val context: Context, private var steps: MutableList<Command>) :
     RecyclerView.Adapter<SingleCommandAdapter.CommandStepViewHolder>() {
 
     inner class CommandStepViewHolder(val binding: ListItemSingleCommandBinding) :
@@ -66,6 +70,17 @@ class SingleCommandAdapter(private val context: Context, private val steps: Muta
                     steps[adapterPosition].commandName = selectedType // 更新数据模型
                     updateVisibility(selectedType) // 更新UI
                 }
+            }
+
+            binding.btnDeleteCommand.setOnClickListener {
+                if (step.id.toInt() != 0) {
+                    GlobalScope.launch {
+                        AppDatabase.getInstance(AutomationApplication.context).commandDao()
+                            .deleteById(step.id.toInt())
+                    }
+                }
+                steps.remove(step)
+                notifyDataSetChanged()
             }
 
             // 为所有 EditText 添加 TextWatcher
@@ -132,6 +147,11 @@ class SingleCommandAdapter(private val context: Context, private val steps: Muta
 
     fun addStep(command: Command) {
         steps.add(command)
+        notifyItemInserted(steps.size - 1)
+    }
+
+    fun addSteps(commands: MutableList<Command>) {
+        steps = commands
         notifyItemInserted(steps.size - 1)
     }
 }

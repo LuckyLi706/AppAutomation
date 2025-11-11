@@ -25,6 +25,7 @@ import com.lucky.appautomation.db.model.CommandGroup
 import com.lucky.appautomation.enum.CommandType
 import com.lucky.appautomation.model.PackageInfoModel
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -32,12 +33,18 @@ class AddCommandActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddCommandBinding
     private lateinit var singleCommandAdapter: SingleCommandAdapter
-    private val stepsList = mutableListOf<Command>()
+    private var stepsList = mutableListOf<Command>()
     private val packageInfoList = mutableListOf<PackageInfoModel>()
     private lateinit var dropdownAdapter: ArrayAdapter<String>
+    private lateinit var group: CommandGroup
     private var packageIndex: Int = 0
+    private var packageInfo = mutableListOf<String>()
+
+    /// 是否来自于主页的item
+    public var groupName: String = ""
 
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddCommandBinding.inflate(layoutInflater)
@@ -54,11 +61,42 @@ class AddCommandActivity : AppCompatActivity() {
         setupClickListeners()
 
         setupPackageInfo()
+
+        GlobalScope.launch(Dispatchers.IO) {
+            iniIntentData()
+        }
+    }
+
+    private suspend fun iniIntentData() {
+        val intent = intent
+        val groupName = intent.getStringExtra("groupName")
+        groupName?.let { it ->
+            this.groupName = groupName
+            val groupData = AppDatabase.getInstance(this).commandGroupDao().getGroupByName(it)
+            groupData?.let {
+                val commands =
+                    AppDatabase.getInstance(this).commandDao().getCommandsByGroupName(groupName)
+                stepsList = commands.toMutableList()
+                runOnUiThread {
+                    group = groupData
+                    if (group.filterPackageName.isNotEmpty()) {
+                        this.packageInfoList.forEach {
+                            if (it.packageName == group.filterPackageName) {
+                                this.packageIndex = this.packageInfoList.indexOf(it) + 1
+                                return@forEach
+                            }
+                        }
+                    }
+                    binding.etCommandName.setText(groupName)
+                    binding.dropdownPackage.setText(packageInfo[this.packageIndex], false)
+                    singleCommandAdapter.addSteps(stepsList)
+                }
+            }
+        }
     }
 
     private fun setupPackageInfo() {
         this.getThirdPartyApps()
-        var packageInfo = mutableListOf<String>()
         packageInfoList.forEach {
             packageInfo.add("${it.appName}(${it.packageName})")
         }

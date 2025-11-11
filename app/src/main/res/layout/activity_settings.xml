@@ -118,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary"
-                    tools:text="展示所有的执行信息" />
+                    android:text="展示所有的执行信息" />
             </LinearLayout>
 
             <!--

@@ -37,9 +37,9 @@
             android:layout_marginTop="8dp"
             android:drawablePadding="4dp"
             android:gravity="center_vertical"
-            android:text="循环执行"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:text="循环执行"
             android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="?attr/colorSecondary"
             app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +60,7 @@
                 android:id="@+id/btn_start_command"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:layout_marginBottom="3dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_background_primary"
                 android:clickable="true"
@@ -70,8 +71,7 @@
                 android:paddingTop="6dp"
                 android:paddingEnd="12dp"
                 android:paddingBottom="6dp"
-                android:visibility="visible"
-                android:layout_marginBottom="3dp">
+                android:visibility="visible">
 
                 <ImageView
                     android:layout_width="16dp"
@@ -124,13 +124,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/btn_pause_command"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="3dp"
                     android:background="@drawable/button_background_primary"
                     android:clickable="true"
                     android:focusable="true"
@@ -160,7 +161,6 @@
                     android:id="@+id/btn_stop_running_command"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:background="@drawable/button_background_secondary"
                     android:clickable="true"
                     android:focusable="true"
@@ -191,6 +191,7 @@
                 android:id="@+id/group_paused_buttons"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="gone">
@@ -228,7 +229,6 @@
                     android:id="@+id/btn_stop_paused_command"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
                     android:background="@drawable/button_background_secondary"
                     android:clickable="true"
                     android:focusable="true"

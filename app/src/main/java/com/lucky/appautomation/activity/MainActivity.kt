@@ -5,18 +5,14 @@ import RunState
 import SettingsManager
 import TaskStateManager
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Canvas
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -24,9 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.lucky.appautomation.AutomationApplication
 import com.lucky.appautomation.R
@@ -36,16 +30,11 @@ import com.lucky.appautomation.db.model.CommandGroup
 import com.lucky.appautomation.service.AutomationService
 import com.lucky.appautomation.utils.AccessibilityUtils
 import com.lucky.appautomation.utils.ServiceUtils.Companion.isServiceRunning
-import com.yanzhenjie.recyclerview.OnItemMenuClickListener
-import com.yanzhenjie.recyclerview.SwipeMenuCreator
-import com.yanzhenjie.recyclerview.SwipeMenuItem
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-import kotlin.math.max
 
 
 class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallback {
@@ -53,7 +42,6 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
     private lateinit var binding: ActivityMainBinding
     private lateinit var commandAdapter: CommandGroupAdapter
     private lateinit var commandGroupFlow: Flow<List<CommandGroup>>
-    private lateinit var commandGroupList List<CommandGroup>
 
 
     companion object {
@@ -131,6 +119,7 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
                 // 所以这里理论上不需要手动重新赋值 Flow，但保留亦无害。
                 commandGroupFlow =
                     AppDatabase.getInstance(this).commandGroupDao().getAllGroups()
+                observeAndUpdateUi()
                 Log.d(
                     "com.lucky.appautomation.activity.MainActivity",
                     "Returned from AddCommandActivity with RESULT_OK"
@@ -201,14 +190,6 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
                     "com.lucky.appautomation.activity.MainActivity",
                     "Flow emitted new list with ${freshListOfGroups.size} items."
                 )
-                commandGroupList = freshListOfGroups as List<CommandGroup>
-                for (item in commandGroupList) {
-                    val commands =
-                        AppDatabase.getInstance(AutomationApplication.context).commandDao()
-                            .getCommandsByGroupName(item.name)
-                    (item as CommandGroup).commands = commands
-                }
-
                 commandAdapter.submitList(freshListOfGroups)
             }
         }
@@ -248,9 +229,18 @@ class MainActivity : AppCompatActivity(), CommandGroupAdapter.InteractionCallbac
                 val commands =
                     AppDatabase.getInstance(AutomationApplication.context).commandDao()
                         .getCommandsByGroupName(groupWithCommands.name)
-                groupWithCommands.commands = commands
-
-                startNotificationService(groupWithCommands)
+                if (commands.isEmpty()) {
+                    runOnUiThread {
+                        Toast.makeText(
+                            AutomationApplication.context,
+                            "当前指令为空，请去添加",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } else {
+                    groupWithCommands.commands = commands
+                    startNotificationService(groupWithCommands)
+                }
             }
 
         } else {

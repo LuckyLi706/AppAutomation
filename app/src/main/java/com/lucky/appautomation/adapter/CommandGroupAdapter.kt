@@ -1,9 +1,14 @@
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.lucky.appautomation.AutomationApplication
+import com.lucky.appautomation.activity.AddCommandActivity
 import com.lucky.appautomation.databinding.ListItemCommandGroupBinding
 import com.lucky.appautomation.db.model.CommandGroup
 
@@ -93,6 +98,22 @@ class CommandGroupAdapter :
 
             // 根据状态更新UI和设置监听器
             updateUiForState(stateForThisItem, commandGroup, index)
+
+            binding.root.setOnClickListener {
+                if (stateForThisItem != RunState.IDLE) {
+                    Toast.makeText(
+                        AutomationApplication.context,
+                        "Item is running",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    val intent =
+                        Intent(AutomationApplication.context, AddCommandActivity::class.java)
+                    intent.putExtra("groupName", commandGroup.name)
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+                    AutomationApplication.context.startActivity(intent)
+                }
+            }
         }
 
         /**
@@ -100,7 +121,7 @@ class CommandGroupAdapter :
          */
         private fun bindStaticInfo(commandGroup: CommandGroup) {
             binding.tvCommandTitle.text = commandGroup.name
-            binding.tvLoopStatus.visibility = if (commandGroup.isLoop) View.VISIBLE else View.GONE
+            binding.tvLoopStatus.text = if (commandGroup.isLoop) "循环执行" else "执行一次"
         }
 
         /**
@@ -109,7 +130,7 @@ class CommandGroupAdapter :
         fun updateUiForState(state: RunState, commandGroup: CommandGroup, index: Int) {
             // 根据当前 item 的状态，配置正确的按钮和事件
             when (state) {
-                RunState.IDLE -> setupIdleState(commandGroup, index)
+                RunState.IDLE -> setupIdleState(state, commandGroup, index)
                 RunState.RUNNING -> setupRunningState(commandGroup, index)
                 RunState.PAUSED -> setupPausedState(commandGroup, index)
             }
@@ -118,13 +139,22 @@ class CommandGroupAdapter :
         /**
          * 状态一：空闲。显示“启动”按钮。
          */
-        private fun setupIdleState(commandGroup: CommandGroup, index: Int) {
+        private fun setupIdleState(state: RunState, commandGroup: CommandGroup, index: Int) {
             binding.btnStartCommand.visibility = View.VISIBLE
             binding.btnDeleteCommand.visibility = View.VISIBLE
             binding.groupRunningButtons.visibility = View.GONE
             binding.groupPausedButtons.visibility = View.GONE
 
             binding.btnStartCommand.setOnClickListener {
+
+                if (TaskStateManager.taskStateLiveData.value?.runState != RunState.IDLE) {
+                    Toast.makeText(
+                        AutomationApplication.context,
+                        "请先停止上一个任务",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
                 callback?.onStartClicked(commandGroup)
             }
             binding.btnDeleteCommand.setOnClickListener {
